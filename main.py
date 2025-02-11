@@ -1,9 +1,22 @@
 import os
 import json
+import base64
+import tempfile
+def base64convert():
+  with open('myconfig.txt', 'r', encoding="UTF-8") as enc:
+        encryptdata = enc.read()
+        decoded_bytes = base64.b64decode(encryptdata)
+        decoded_data = json.loads(decoded_bytes.decode('utf-8'))  # 轉回 JSON
+    
+  temp_file = tempfile.NamedTemporaryFile(delete=False, suffix=".json")
+  with open(temp_file.name, "w", encoding="utf-8") as f:
+      json.dump(decoded_data, f)
+    
+  return temp_file.name # 將 JSON 寫入臨時文件
 
 # Load configs for local hosting
-path = 'config.json'
-if os.path.isfile(path): # <-- file won't exist in production
+path = 'myconfig.json'
+if os.path.isfile(base64convert()): # <-- file won't exist in production
   with open(path) as f: 
     config = json.loads(f.read())
   for key, value in config.items():
